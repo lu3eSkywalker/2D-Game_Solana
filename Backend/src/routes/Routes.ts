@@ -1,10 +1,8 @@
 import express from 'express';
-import Server = require('../controllers/Server');
-import BackendHealth = require('../controllers/Server');
+import { getPrivateKey, MintTokensToUser } from '../controllers/MintTokens';
 
 const router: express.Router = express.Router();
 
-router.get('/', Server.BackendCheck)
-router.get('/health', Server.BackendHealth)
+router.post('/minttokens', MintTokensToUser)
 
 export default router;
