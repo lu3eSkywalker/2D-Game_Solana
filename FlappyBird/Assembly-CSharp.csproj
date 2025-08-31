@@ -61,6 +61,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.1.15f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\PauseMenu.cs" />
     <Compile Include="Assets\BirdController.cs" />
     <Compile Include="Assets\PipeMovement.cs" />
     <Compile Include="Assets\ScoreZone.cs" />
