@@ -10,7 +10,6 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 // import dotenv from "dotenv";
-import nacl from "tweetnacl";
 import idl from "../idl/spl_token_mint_and_metadata.json";
 import bs58 from "bs58";
 
@@ -23,7 +22,7 @@ const privateKeyUint8Array = bs58.decode(privateKeyBase58);
 const userKeypair = Keypair.fromSecretKey(privateKeyUint8Array);
 
 console.log(
-  "This is the fucking Public Key: ",
+  "This is the Public Key: ",
   userKeypair.publicKey.toBase58()
 );
 
@@ -60,11 +59,10 @@ export const MintTokensToUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userAddress = new web3.PublicKey(
-      "74wdHWQQRSXHosQsMZKkk7YKpYUZdt5RZUDDGPjoVQ9"
-    );
 
-    const destination = await getAssociatedTokenAddress(mint, userAddress);
+    const { userAddressFromRequest, tokenToMint } = req.body;
+
+    const destination = await getAssociatedTokenAddress(mint, userAddressFromRequest);
 
     console.log("This is the userATA: ", destination.toBase58());
 
@@ -79,7 +77,7 @@ export const MintTokensToUser = async (
         const ataIx = createAssociatedTokenAccountInstruction(
           userPublicKey,
           destination,
-          userAddress,
+          userAddressFromRequest,
           mint
         );
 
@@ -110,13 +108,17 @@ export const MintTokensToUser = async (
       });
     }
 
+    const tokensToMintDecimal = new anchor.BN(tokenToMint * 1_000_000_000);
+
+    console.log("This is the token value to mint: ", tokensToMintDecimal.toString());
+
     const txHash = await program.methods
-      .mintTokens(new anchor.BN(100_000_000_000))
+      .mintTokens(new anchor.BN(tokensToMintDecimal.toString()))
       .accounts({
         mint,
         authority,
         destination,
-        destinationOwner: userAddress,
+        destinationOwner: userAddressFromRequest,
         payer: userWallet.publicKey,
         rent: web3.SYSVAR_RENT_PUBKEY,
         systemProgram: web3.SystemProgram.programId,
