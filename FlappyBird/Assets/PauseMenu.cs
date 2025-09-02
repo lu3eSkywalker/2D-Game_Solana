@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 using UnityEngine.Networking;
 using System.Collections;
@@ -21,6 +22,8 @@ public class PauseMenu : MonoBehaviour
     public Button resumeButton;
     public TMP_InputField walletInputField; // input field for wallet
     public Button claimButton; // claim button
+    public TMP_Text responseText;
+    public Button restartButton;
 
     public GameManager gameManager;
 
@@ -31,6 +34,8 @@ public class PauseMenu : MonoBehaviour
         pauseButton.onClick.AddListener(PauseGame);
         resumeButton.onClick.AddListener(ResumeGame);
         claimButton.onClick.AddListener(ClaimReward);
+
+        restartButton.onClick.AddListener(RestartGame);
     }
 
     public void PauseGame()
@@ -43,6 +48,12 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         pausePanel.SetActive(false);
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void ClaimReward()
@@ -60,6 +71,8 @@ public class PauseMenu : MonoBehaviour
 
             string jsonData = $"{{\"userAddressFromRequest\":\"{walletInputField.text}\", \"tokenToMint\":\"{currentScore}\"}}";
             StartCoroutine(PostRequestForBackendReward("http://localhost:3000/api/v1/backendrequest", jsonData));
+
+            gameManager.scoreText.text = "0";
         }
     }
 
@@ -78,10 +91,13 @@ public class PauseMenu : MonoBehaviour
                 webRequest.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError("Error: " + webRequest.error);
+                responseText.text = "Error: " + webRequest.error;
             }
             else
             {
+                string serverResponse = webRequest.downloadHandler.text;
                 Debug.Log("Response: " + webRequest.downloadHandler.text);
+                responseText.text = "Tokens Minted Successfully";
             }
         }
 
