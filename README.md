@@ -16,6 +16,12 @@ This project combines **Unity (C#)**, a **Solana Token Mint Program**, and a **B
 
 ---
 
+## Gameplay
+
+<video src="https://github.com/user-attachments/assets/8c9b215f-3946-4266-96a4-0965202ce410" width="500" controls></video>
+
+---
+
 ## 📂 Project Structure  
 
 ---
